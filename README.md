@@ -26,7 +26,7 @@ An example of a generated document: [`docs/exemplo-escala-julho-2026.docx`](docs
 
 ## Impact
 
-- Adopted by my supervisor in July 2026 ("está funcionando perfeitamente").
+- Adopted by my supervisor in July 2026 and still in use ("está funcionando perfeitamente").
 - The calculation was **validated against the real official schedules, with 0 differences**. The weekend rule of the second workplace was checked cell by cell against 16 real weekends.
 - ⏱️ **Time saved:** a monthly document that took hours by hand in Word now takes one click.
 
