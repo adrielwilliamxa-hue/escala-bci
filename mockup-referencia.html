@@ -1,0 +1,862 @@
+<meta charset="UTF-8">
+<title>Escala BCI — Mockup do site</title>
+<style>
+  :root {
+    --ink: #16202B;
+    --ink-soft: #4B5C6B;
+    --paper: #EEF1F3;
+    --surface: #FFFFFF;
+    --line: #D3DBE0;
+    --accent: #C97A2B;
+    --accent-ink: #ffffff;
+    --accent-soft: #F6E3CC;
+    --structure: #3A5A6B;
+    --structure-soft: #E4EAEC;
+    --ok: #3F7D5C;
+    --ok-soft: #E3EFE8;
+    --critical: #C13B3B;
+    --critical-soft: #F7E5E4;
+    --shadow: 0 8px 24px -8px rgba(22, 32, 43, 0.25);
+    --radius: 3px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #E9EEF2;
+      --ink-soft: #9FB0BC;
+      --paper: #131B22;
+      --surface: #1B252E;
+      --line: #2C3A44;
+      --accent: #E0964A;
+      --accent-ink: #16202B;
+      --accent-soft: #3D2E19;
+      --structure: #7FA0AF;
+      --structure-soft: #223038;
+      --ok: #6FBE93;
+      --ok-soft: #1C2E26;
+      --critical: #E17575;
+      --critical-soft: #33201F;
+      --shadow: 0 8px 28px -8px rgba(0, 0, 0, 0.55);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #E9EEF2; --ink-soft: #9FB0BC; --paper: #131B22; --surface: #1B252E;
+    --line: #2C3A44; --accent: #E0964A; --accent-ink: #16202B; --accent-soft: #3D2E19; --structure: #7FA0AF;
+    --structure-soft: #223038; --ok: #6FBE93; --ok-soft: #1C2E26; --critical: #E17575;
+    --critical-soft: #33201F; --shadow: 0 8px 28px -8px rgba(0,0,0,0.55);
+  }
+  :root[data-theme="light"] {
+    --ink: #16202B; --ink-soft: #4B5C6B; --paper: #EEF1F3; --surface: #FFFFFF;
+    --line: #D3DBE0; --accent: #C97A2B; --accent-ink: #ffffff; --accent-soft: #F6E3CC; --structure: #3A5A6B;
+    --structure-soft: #E4EAEC; --ok: #3F7D5C; --ok-soft: #E3EFE8; --critical: #C13B3B;
+    --critical-soft: #F7E5E4; --shadow: 0 8px 24px -8px rgba(22,32,43,0.25);
+  }
+
+  .mock * { box-sizing: border-box; }
+  .mock {
+    font-family: "Segoe UI", "Segoe UI Variable", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    font-variant-numeric: tabular-nums;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .mock h1, .mock h2, .mock h3 {
+    font-family: "Bahnschrift", "DIN Condensed", "Oswald", "Segoe UI Semibold", sans-serif;
+    text-wrap: balance;
+    letter-spacing: 0.01em;
+    margin: 0;
+  }
+  .mock .app { display: grid; grid-template-columns: 208px 1fr; min-height: 640px; }
+
+  /* ---------- sidebar ---------- */
+  .mock .sidebar {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 20px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .mock .brand { display: flex; align-items: center; gap: 10px; padding: 0 4px; }
+  .mock .brand svg { flex: none; }
+  .mock .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+  .mock .brand-text b { font-family: "Bahnschrift", sans-serif; font-size: 15px; letter-spacing: 0.04em; }
+  .mock .brand-text span { font-size: 10.5px; color: #9FB0BC; letter-spacing: 0.06em; text-transform: uppercase; }
+  .mock .brand-logo {
+    display: flex; justify-content: center; padding: 10px 0 4px;
+    border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .mock nav { display: flex; flex-direction: column; gap: 2px; }
+  .mock .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.09em; color: #7C8E9B; margin: 10px 8px 4px; }
+  .mock .nav-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 10px; border-radius: var(--radius); font-size: 13.5px;
+    color: #C7D2D9; cursor: pointer; border: 1px solid transparent;
+  }
+  .mock .nav-item:hover { background: rgba(255,255,255,0.06); }
+  .mock .nav-item.active { background: rgba(201,122,43,0.16); color: #fff; border-color: rgba(201,122,43,0.4); }
+  .mock .nav-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--structure); }
+  .mock .nav-item.has-event .dot { background: var(--accent); }
+
+  /* ---------- main ---------- */
+  .mock .main { display: flex; flex-direction: column; min-width: 0; }
+  .mock .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 26px; border-bottom: 1px solid var(--line); background: var(--surface);
+  }
+  .mock .topbar h1 { font-size: 20px; }
+  .mock .topbar .meta { font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; }
+  .mock .topbar-right { display: flex; align-items: center; gap: 14px; }
+  .mock .today-badge {
+    display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-soft);
+    padding: 5px 10px; border: 1px solid var(--line); border-radius: 20px; white-space: nowrap;
+  }
+  .mock .today-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex: none; }
+  .mock .today-badge b { color: var(--ink); font-weight: 600; }
+  .mock .actions { display: flex; gap: 8px; }
+  .mock .btn {
+    font: inherit; font-size: 12.5px; font-weight: 600; letter-spacing: 0.01em;
+    padding: 8px 13px; border-radius: var(--radius); border: 1px solid var(--line);
+    background: var(--surface); color: var(--ink); cursor: pointer;
+  }
+  .mock .btn:hover { border-color: var(--structure); }
+  .mock .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .mock .view { padding: 22px 26px; overflow: auto; }
+  .mock .view.hidden { display: none; }
+
+  /* ---------- dashboard ---------- */
+  .mock .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+  .mock .stat {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 13px 14px;
+  }
+  .mock .stat .label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); }
+  .mock .stat .value { font-size: 24px; font-family: "Bahnschrift", sans-serif; margin-top: 4px; }
+  .mock .stat .value.accent { color: var(--accent); }
+  .mock .dash-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; align-items: start; margin-bottom: 22px; }
+  .mock .month-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .mock .month-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 11px 12px; cursor: pointer;
+  }
+  .mock .month-card:hover { border-color: var(--structure); }
+  .mock .month-card.current { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  .mock .month-card .name { font-size: 13px; font-weight: 600; }
+  .mock .month-card .tag {
+    display: inline-flex; align-items: center; gap: 5px; margin-top: 7px;
+    font-size: 11px; color: var(--ink-soft);
+  }
+  .mock .month-card .tag.flag { color: var(--accent); }
+  .mock .month-card .tag .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .mock .panel {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px;
+  }
+  .mock .panel h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); margin-bottom: 10px; }
+  .mock .event { display: flex; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); }
+  .mock .event:first-of-type { border-top: none; }
+  .mock .event .when { font-size: 11.5px; color: var(--ink-soft); width: 46px; flex: none; padding-top: 1px; }
+  .mock .event .what { font-size: 13px; }
+  .mock .event .what b { font-weight: 600; }
+  .mock .badge { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 20px; margin-left: 6px; }
+  .mock .badge.ferias { background: var(--structure-soft); color: var(--structure); }
+  .mock .badge.folga { background: var(--ok-soft); color: var(--ok); }
+
+  /* ---------- equipe (team blocks) ---------- */
+  .mock .section { margin-bottom: 22px; }
+  .mock .panel-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); margin-bottom: 10px; }
+  .mock .team-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mock .team-block {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px;
+  }
+  .mock .team-block .team-head {
+    display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; margin-bottom: 8px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .mock .team-block.bravo .team-head { color: var(--ink); }
+  .mock .team-block.alfa .team-head { color: var(--structure); }
+  .mock .team-block .team-head .swatch { width: 10px; height: 10px; border-radius: 50%; background: currentColor; }
+  .mock .team-row {
+    display: flex; align-items: center; justify-content: space-between; padding: 7px 6px; border-radius: 2px;
+    cursor: pointer; position: relative;
+  }
+  .mock .team-row + .team-row { border-top: 1px solid var(--line); }
+  .mock .team-row:hover { background: var(--paper); }
+  .mock .team-row.static { cursor: default; }
+  .mock .team-row.static:hover { background: transparent; }
+  .mock .team-row .who { display: flex; align-items: baseline; gap: 8px; }
+  .mock .team-row .who .nome { font-size: 13.5px; font-weight: 600; }
+  .mock .turno-badge {
+    font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+    font-variant-numeric: tabular-nums; letter-spacing: 0.01em;
+  }
+  .mock .turno-badge.bravo { background: var(--structure-soft); color: var(--ink); }
+  .mock .turno-badge.alfa { background: var(--structure-soft); color: var(--structure); }
+  .mock .team-row .folga-count {
+    font-size: 11px; padding: 2px 8px; border-radius: 20px; background: var(--structure-soft); color: var(--structure);
+  }
+  .mock .team-row .folga-count.zero { background: transparent; color: var(--ink-soft); }
+
+  /* ---------- calendar ---------- */
+  .mock .cal-hint { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 12px; }
+  .mock .cal-hint b { color: var(--accent); }
+  .mock table.cal { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .mock table.cal th {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft);
+    text-align: left; padding: 0 8px 6px; font-weight: 600;
+  }
+  .mock table.cal .daynum { font-size: 11px; color: var(--ink-soft); padding: 8px 8px 6px; border-bottom: 1px solid var(--line); }
+  .mock table.cal td.day {
+    border: 1px solid var(--line); vertical-align: top; padding: 6px 8px 8px;
+    background: var(--surface); position: relative; min-height: 108px;
+  }
+  .mock table.cal td.day.weekend { background: var(--structure-soft); }
+  .mock table.cal td.day.folga-dia { box-shadow: inset 4px 0 0 var(--ok); }
+  .mock table.cal td.daynum.today { color: var(--accent); font-weight: 700; }
+  .mock table.cal td.day.today {
+    background: var(--accent-soft) !important;
+    box-shadow: inset 0 0 0 2px var(--accent);
+    position: relative;
+  }
+  .mock table.cal td.day.today.folga-dia { box-shadow: inset 0 0 0 2px var(--accent), inset 4px 0 0 var(--ok); }
+  .mock table.cal td.day.today::after {
+    content: 'HOJE'; position: absolute; top: 4px; right: 5px;
+    font-size: 7.5px; font-weight: 800; letter-spacing: 0.05em;
+    color: var(--accent-ink); background: var(--accent); padding: 1px 5px; border-radius: 2px;
+  }
+  .mock table.cal .slotgroup {
+    display: inline-block; font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+    color: var(--structure); background: var(--structure-soft); padding: 1px 6px; border-radius: 10px;
+    margin: 6px 0 3px;
+  }
+  .mock table.cal .slotgroup:first-of-type { margin-top: 0; }
+  .mock .person {
+    font-size: 12px; padding: 2px 3px; cursor: pointer; display: block;
+  }
+  .mock .person:hover { background: var(--structure-soft); }
+  .mock .person + .person { border-top: 1px solid var(--line); }
+  .mock table.cal .slotgroup + .person { border-top: 1px solid var(--line); padding-top: 3px; }
+  .mock .person.bravo { color: var(--ink); }
+  .mock .person.alfa { color: var(--structure); }
+
+  /* ---------- popup ---------- */
+  .mock .popup {
+    position: absolute; top: 100%; left: 6px; margin-top: 4px; z-index: 20;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow); width: 224px; padding: 6px; display: none;
+  }
+  .mock .popup.open { display: block; }
+  .mock .popup .opt {
+    display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 2px;
+    font-size: 12.5px; cursor: pointer;
+  }
+  .mock .popup .opt:hover { background: var(--paper); }
+  .mock .popup .opt .k {
+    width: 20px; height: 20px; border-radius: 3px; background: var(--structure-soft); color: var(--structure);
+    display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex: none;
+  }
+  .mock .popup .divider { height: 1px; background: var(--line); margin: 4px 2px; }
+  .mock .popup .form { padding: 8px; display: none; }
+  .mock .popup .form.open { display: block; }
+  .mock .popup .form label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); display: block; margin: 8px 0 3px; }
+  .mock .popup .form label:first-of-type { margin-top: 0; }
+  .mock .popup .form select, .mock .popup .form input {
+    width: 100%; font: inherit; font-size: 12.5px; padding: 6px 7px; border-radius: 2px;
+    border: 1px solid var(--line); background: var(--paper); color: var(--ink);
+  }
+  .mock .popup .form input[readonly] { color: var(--ink-soft); background: var(--structure-soft); }
+  .mock .popup .form .save {
+    margin-top: 10px; width: 100%; background: var(--accent); color: var(--accent-ink); border: none;
+    padding: 7px; border-radius: 2px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+  }
+  .mock .popup .form .note { font-size: 11px; color: var(--ink-soft); margin-top: 6px; }
+  .mock .toast {
+    position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%) translateY(12px);
+    background: var(--ink); color: var(--paper); padding: 9px 16px; border-radius: 4px;
+    font-size: 12.5px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 50;
+  }
+  .mock .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 720px) {
+    .mock .app { grid-template-columns: 1fr; }
+    .mock .sidebar { flex-direction: row; overflow-x: auto; }
+    .mock .stat-row, .mock .dash-grid, .mock .month-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media print {
+    body * { visibility: hidden; }
+    .mock, .mock * { visibility: visible; }
+    .mock .sidebar, .mock .topbar .actions, .mock .cal-hint, .mock .toast, .mock .popup,
+    .mock .today-badge { display: none !important; }
+    .mock table.cal td.daynum.today { color: inherit; font-weight: inherit; }
+    .mock table.cal td.day.today { background: none !important; box-shadow: none; }
+    .mock table.cal td.day.today::after { content: none; }
+    .mock { position: absolute; left: 0; top: 0; border: none; }
+    .mock .app { display: block; }
+    .mock table.cal td.day { height: auto; min-height: 60px; }
+  }
+</style>
+
+<div class="mock">
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+          <path d="M13 3.5a9.5 9.5 0 1 0 8.6 5.4" stroke="#C97A2B" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M21.6 4.5v4.4h-4.4" stroke="#C97A2B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="brand-text">
+          <b>ESCALA BCI</b>
+          <span>Brigada &middot; 2026</span>
+        </div>
+      </div>
+
+      <div class="brand-logo" aria-label="Escala BCI">
+        <svg width="118" height="58" viewBox="0 0 118 58" xmlns="http://www.w3.org/2000/svg">
+          <text x="57" y="24" text-anchor="middle" font-family="Bahnschrift, 'DIN Condensed', Arial, sans-serif"
+                font-weight="700" font-size="21" letter-spacing="1" fill="#F3F6F8">BCI</text>
+          <path d="M36 32 Q 57 42, 78 32"
+                fill="none" stroke="#3FC1E9" stroke-width="5" stroke-linecap="round"/>
+          <text x="57" y="54" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif"
+                font-weight="600" font-size="7.5" letter-spacing="3" fill="#8FCBE0">BRIGADA</text>
+        </svg>
+      </div>
+
+      <nav>
+        <div class="nav-item active" data-view="dashboard"><span>Painel do ano</span></div>
+      </nav>
+      <div>
+        <div class="nav-label">Meses</div>
+        <nav>
+          <div class="nav-item" data-view="month" data-month="Abril"><span>Abril</span><span class="dot"></span></div>
+          <div class="nav-item has-event" data-view="month" data-month="Maio"><span>Maio</span><span class="dot"></span></div>
+          <div class="nav-item" data-view="month" data-month="Junho"><span>Junho</span><span class="dot"></span></div>
+          <div class="nav-item has-event" data-view="month" data-month="Julho"><span>Julho</span><span class="dot"></span></div>
+          <div class="nav-item" data-view="month" data-month="Agosto"><span>Agosto</span><span class="dot"></span></div>
+        </nav>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar" id="topbar">
+        <div>
+          <h1 id="topbar-title">Painel do ano</h1>
+          <div class="meta" id="topbar-meta">Visão geral de folgões, férias e próximos eventos</div>
+        </div>
+        <div class="topbar-right">
+          <div class="today-badge" id="today-badge"><span class="dot"></span><span>Hoje é <b id="today-text">--</b></span></div>
+          <div class="actions" id="topbar-actions"></div>
+        </div>
+      </div>
+
+      <!-- ============ DASHBOARD VIEW ============ -->
+      <div class="view" id="view-dashboard">
+        <div class="stat-row">
+          <div class="stat"><div class="label">Brigadistas</div><div class="value" id="stat-brigadistas">–</div></div>
+          <div class="stat"><div class="label">Folgões no ano</div><div class="value accent" id="stat-folgoes">–</div></div>
+          <div class="stat"><div class="label">Férias ativas</div><div class="value" id="stat-ferias">–</div></div>
+          <div class="stat"><div class="label">Meses gerados</div><div class="value">11 / 12</div></div>
+        </div>
+
+        <div class="section">
+          <h3 class="panel-title">Equipe — quem é quem, e o horário de cada plantão</h3>
+          <div class="team-blocks" id="team-blocks"></div>
+        </div>
+
+        <div class="dash-grid">
+          <div>
+            <div class="month-grid" id="month-grid"></div>
+          </div>
+          <div class="panel">
+            <h3>Próximos eventos</h3>
+            <div id="proximos-eventos"></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 class="panel-title">Folgões no ano — de hoje até 31/12</h3>
+          <div class="team-block" style="max-width: 420px;">
+            <div id="folgas-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ MONTH VIEW ============ -->
+      <div class="view hidden" id="view-month">
+        <div class="cal-hint">Clique em um nome para <b>trocar o dia ou marcar férias</b>. Para renomear alguém no ano todo, use o Painel do ano.</div>
+        <div id="cal-container"></div>
+        <div class="section" id="mes-eventos-section">
+          <h3 class="panel-title">Trocas, férias e reciclagem deste mês</h3>
+          <div id="mes-eventos"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast">Alteração salva.</div>
+  <div class="popup" id="edit-popup">
+    <div class="opt" data-action="dia"><span class="k">D</span>Alterar este dia</div>
+    <div class="opt" data-action="ferias"><span class="k">F</span>Marcar férias</div>
+    <div class="divider"></div>
+
+    <div class="form" data-form="dia">
+      <label id="dia-label">Substituto em --/--</label>
+      <select id="dia-select"></select>
+      <button class="save">Salvar troca do dia</button>
+      <div class="note" id="dia-note">Vale só para este dia.</div>
+    </div>
+
+    <div class="form" data-form="ferias">
+      <label>Início</label><input type="text" id="ferias-inicio">
+      <label>Duração</label>
+      <select id="ferias-duracao">
+        <option value="20">20 dias</option>
+        <option value="mes">1 mês</option>
+      </select>
+      <label>Fim (calculado)</label><input type="text" id="ferias-fim" readonly>
+      <label>Substituto</label>
+      <select id="ferias-select"></select>
+      <button class="save">Marcar férias</button>
+    </div>
+  </div>
+
+  <div class="popup" id="rename-popup">
+    <div class="form open">
+      <label id="ano-label">Novo nome</label>
+      <input type="text" id="ano-input">
+      <button class="save">Atualizar o ano todo</button>
+      <div class="note">Isso muda o nome dessa pessoa em todos os meses do ano, de uma vez.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const root = document;
+
+  // ---------------- regra de rodízio validada (mesma do Excel) ----------------
+  const EQUIPE = [
+    { nome: 'EDUARDO',     equipe: 'Bravo', turno: '0719', pos: 1 },
+    { nome: 'BRUNO',    equipe: 'Bravo', turno: '0719', pos: 2 },
+    { nome: 'GABRIEL',     equipe: 'Bravo', turno: '1022', pos: 1 },
+    { nome: 'IGOR',   equipe: 'Bravo', turno: '1022', pos: 2 },
+    { nome: 'VITOR', equipe: 'Alfa',  turno: '0719', pos: 1 },
+    { nome: 'CARLOS',    equipe: 'Alfa',  turno: '0719', pos: 2 },
+    { nome: 'DANIEL',     equipe: 'Alfa',  turno: '1022', pos: 1 },
+    { nome: 'JULIO',  equipe: 'Alfa',  turno: '1022', pos: 2 },
+  ];
+  const ANCORA = new Date(2026, 3, 1); // 01/04/2026 = dia da equipe Bravo
+  const FOLGAS = [
+    { pessoa: 'CARLOS', data: '2026-04-04', substituto: 'DANIEL' },
+    { pessoa: 'DANIEL',  data: '2026-04-26', substituto: 'CARLOS' },
+  ];
+  const FERIAS = [
+    { pessoa: 'DANIEL', inicio: '2026-07-15', fim: '2026-08-03', substituto: 'HUGO' },
+  ];
+  const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const DIAS_SEMANA = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+  function isoDate(d) { return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+  // domingo e sábado não levam "-feira"; segunda a sexta levam
+  function nomeDiaSemana(dow) {
+    if (dow === 0) return 'domingo';
+    if (dow === 6) return 'sábado';
+    return `${DIAS_SEMANA[dow].toLowerCase()}-feira`;
+  }
+  function plural(n, singular, pluralForm) { return n === 1 ? singular : pluralForm; }
+  function findPerson(equipe, turno, pos) {
+    return EQUIPE.find(p => p.equipe === equipe && p.turno === turno && p.pos === pos).nome;
+  }
+  function applyOverrides(nome, dateStr) {
+    const f = FERIAS.find(x => x.pessoa === nome && dateStr >= x.inicio && dateStr <= x.fim);
+    if (f) return f.substituto;
+    const g = FOLGAS.find(x => x.pessoa === nome && x.data === dateStr);
+    if (g) return g.substituto;
+    return nome;
+  }
+  function teamOfDay(date) {
+    const diffDays = Math.round((date - ANCORA) / 86400000);
+    return (((diffDays % 2) + 2) % 2) === 0 ? 'Bravo' : 'Alfa';
+  }
+  function weekendDefaults(year, monthIdx) {
+    const result = {};
+    let toggle = 1;
+    const daysInMonth = new Date(year, monthIdx + 1, 0).getDate();
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dow = new Date(year, monthIdx, d).getDay();
+      if (dow === 0 || dow === 6) { result[d] = toggle; toggle = toggle === 1 ? 2 : 1; }
+    }
+    return result;
+  }
+  function computeDay(date, weekendPos) {
+    const dateStr = isoDate(date);
+    const team = teamOfDay(date);
+    const dow = date.getDay();
+    const b1 = findPerson(team, '0719', 1), b2 = findPerson(team, '0719', 2);
+    const b3 = findPerson(team, '1022', 1), b4 = findPerson(team, '1022', 2);
+    const r1 = applyOverrides(b1, dateStr), r2 = applyOverrides(b2, dateStr);
+    const r3 = applyOverrides(b3, dateStr), r4 = applyOverrides(b4, dateStr);
+    if (dow === 0) return { slot0719: [{n:r2,base:b2}], slot1022: [weekendPos===1 ? {n:r3,base:b3} : {n:r4,base:b4}] };
+    if (dow === 6) return { slot0719: [{n:r1,base:b1}], slot1022: [weekendPos===1 ? {n:r3,base:b3} : {n:r4,base:b4}] };
+    return { slot0719: [{n:r1,base:b1},{n:r2,base:b2}], slot1022: [{n:r3,base:b3},{n:r4,base:b4}] };
+  }
+
+  // ---------------- data de hoje (real, recalculada toda vez que a página abre) ----------------
+  const MES_NOMES_MIN = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const TODAY = new Date();
+  const TODAY_ISO = isoDate(TODAY);
+
+  function renderTodayBadge() {
+    const txt = `${nomeDiaSemana(TODAY.getDay())}, ${pad2(TODAY.getDate())} de ${MES_NOMES_MIN[TODAY.getMonth()]} de ${TODAY.getFullYear()}`;
+    root.querySelector('#today-text').textContent = txt;
+  }
+
+  // ---------------- render do calendário completo do mês ----------------
+  const calContainer = root.querySelector('#cal-container');
+  let currentMonthIdx = 5, currentYear = 2026; // Junho por padrão
+
+  function renderMonth(monthIdx, year) {
+    currentMonthIdx = monthIdx; currentYear = year;
+    const monthStart = new Date(year, monthIdx, 1);
+    const monthEnd = new Date(year, monthIdx + 1, 0);
+    const firstSunday = new Date(monthStart);
+    firstSunday.setDate(monthStart.getDate() - monthStart.getDay());
+    const weekendPos = weekendDefaults(year, monthIdx);
+
+    let nWeeks = 1;
+    while (true) {
+      const check = new Date(firstSunday);
+      check.setDate(firstSunday.getDate() + 7 * nWeeks);
+      if (check <= monthEnd) nWeeks++; else break;
+    }
+
+    let html = '<table class="cal"><tr>' + DIAS_SEMANA.map(d => `<th>${d}</th>`).join('') + '</tr>';
+    for (let w = 0; w < nWeeks; w++) {
+      html += '<tr>';
+      for (let c = 0; c < 7; c++) {
+        const d = new Date(firstSunday); d.setDate(firstSunday.getDate() + 7*w + c);
+        const inMonth = d >= monthStart && d <= monthEnd;
+        const isWeekend = c === 0 || c === 6;
+        const isToday = inMonth && isoDate(d) === TODAY_ISO;
+        html += `<td class="daynum${isWeekend?' weekend':''}${isToday?' today':''}">${inMonth ? pad2(d.getDate()) : ''}</td>`;
+      }
+      html += '</tr><tr>';
+      for (let c = 0; c < 7; c++) {
+        const d = new Date(firstSunday); d.setDate(firstSunday.getDate() + 7*w + c);
+        const inMonth = d >= monthStart && d <= monthEnd;
+        const isWeekend = c === 0 || c === 6;
+        const dateStr = isoDate(d);
+        const isToday = inMonth && dateStr === TODAY_ISO;
+        if (!inMonth) { html += `<td class="day${isWeekend?' weekend':''}"></td>`; continue; }
+        const info = computeDay(d, weekendPos[d.getDate()]);
+        const isFolgaDay = FOLGAS.some(f => f.data === dateStr);
+        const personSpan = (p) => {
+          const cls = EQUIPE.find(e => e.nome === p.base).equipe.toLowerCase();
+          const changed = p.n !== p.base ? ' style="font-style:italic"' : '';
+          return `<span class="person ${cls}" data-name="${p.base}" data-date="${dateStr}"${changed}>${p.n}</span>`;
+        };
+        html += `<td class="day${isWeekend?' weekend':''}${isToday?' today':''}${isFolgaDay?' folga-dia':''}">`;
+        html += `<div class="slotgroup">07–19h</div>` + info.slot0719.map(personSpan).join('');
+        html += `<div class="slotgroup">10–22h</div>` + info.slot1022.map(personSpan).join('');
+        html += `</td>`;
+      }
+      html += '</tr>';
+    }
+    html += '</table>';
+    calContainer.innerHTML = html;
+  }
+
+  // ---------------- stats + blocos de equipe ----------------
+  // folgões que a pessoa AINDA vai ter esse ano: 1 por mês restante (regra do "folgão"),
+  // descontando qualquer folgão já lançado de hoje até 31/dez.
+  const REMAINING_MONTHS = 12 - TODAY.getMonth();
+  function folgasRestantes(nome) {
+    const jaLancados = FOLGAS.filter(f => f.pessoa === nome && f.data >= TODAY_ISO && f.data <= `${TODAY.getFullYear()}-12-31`).length;
+    return Math.max(0, REMAINING_MONTHS - jaLancados);
+  }
+
+  // ---------------- eventos (trocas/folgões, férias, reciclagem) — fonte única, reaproveitada
+  // no Painel do ano ("Próximos eventos") e em cada mês (tela e impressão/Word) ----------------
+  function addDaysIso(dataIso, dias) {
+    const d = new Date(`${dataIso}T00:00:00`);
+    d.setDate(d.getDate() + dias);
+    return isoDate(d);
+  }
+  function diaMesAbrev(dataIso) {
+    const [, m, d] = dataIso.split('-').map(Number);
+    return `${pad2(d)} ${MES_NOMES_MIN[m - 1].slice(0, 3)}`;
+  }
+  function allEvents() {
+    const eventos = [];
+    FOLGAS.forEach(f => {
+      eventos.push({ data: f.data, texto: `${f.pessoa} folgão`, badgeTxt: `${f.substituto} cobre`, badgeCls: 'folga' });
+    });
+    FERIAS.forEach(f => {
+      eventos.push({ data: f.inicio, texto: `${f.pessoa} inicia férias`, badgeTxt: `${f.substituto} cobre`, badgeCls: 'ferias' });
+      eventos.push({ data: addDaysIso(f.fim, 1), texto: `${f.pessoa} volta de férias`, badgeTxt: '', badgeCls: '' });
+    });
+    // reciclagem de certificados ainda não tem data cadastrada neste protótipo — quando tiver,
+    // entra aqui do mesmo jeito (mesma fonte única de eventos).
+    eventos.sort((a, b) => a.data.localeCompare(b.data));
+    return eventos;
+  }
+  function renderEventList(container, eventos, vazioTexto) {
+    if (eventos.length === 0) {
+      container.innerHTML = `<div class="event"><div class="what">${vazioTexto}</div></div>`;
+      return;
+    }
+    container.innerHTML = eventos.map(e => `<div class="event">
+      <div class="when">${diaMesAbrev(e.data)}</div>
+      <div class="what"><b>${e.texto.split(' ')[0]}</b> ${e.texto.split(' ').slice(1).join(' ')}
+        ${e.badgeTxt ? `<span class="badge ${e.badgeCls}">${e.badgeTxt}</span>` : ''}</div>
+    </div>`).join('');
+  }
+
+  function renderStatsAndTeams() {
+    root.querySelector('#stat-brigadistas').textContent = EQUIPE.length;
+    root.querySelector('#stat-folgoes').textContent = REMAINING_MONTHS;
+    root.querySelector('#stat-ferias').textContent = FERIAS.length;
+
+    const turnoLabel = (p) => p.turno === '0719' ? '07h–19h' : '10h–22h';
+    const blockHtml = (equipeName, cls) => {
+      const membros = EQUIPE.filter(p => p.equipe === equipeName);
+      const rows = membros.map(p => `<div class="team-row" data-name="${p.nome}">
+          <div class="who"><span class="nome">${p.nome}</span></div>
+          <span class="turno-badge ${cls}">${turnoLabel(p)}</span>
+        </div>`).join('');
+      return `<div class="team-block ${cls}">
+        <div class="team-head"><span class="swatch"></span>Plantão ${equipeName}</div>
+        ${rows}
+      </div>`;
+    };
+    root.querySelector('#team-blocks').innerHTML = blockHtml('Bravo', 'bravo') + blockHtml('Alfa', 'alfa');
+
+    const folgaRows = EQUIPE.map(p => {
+      const n = folgasRestantes(p.nome);
+      return `<div class="team-row static">
+        <div class="who"><span class="nome">${p.nome}</span></div>
+        <span class="folga-count${n===0?' zero':''}">${n} ${plural(n, 'folgão', 'folgões')} até dez/${TODAY.getFullYear()}</span>
+      </div>`;
+    }).join('');
+    root.querySelector('#folgas-list').innerHTML = folgaRows;
+
+    // grade de meses do Painel do ano — status calculado a partir de FOLGAS/FERIAS reais
+    const meses9 = ['Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro'];
+    const cardHtml = meses9.map(nomeMes => {
+      const idx = MESES.indexOf(nomeMes);
+      const inicioMes = new Date(TODAY.getFullYear(), idx, 1);
+      const fimMes = new Date(TODAY.getFullYear(), idx + 1, 0);
+      const isPastMonth = idx < TODAY.getMonth();
+      const folgasNoMes = FOLGAS.filter(f => { const d = new Date(`${f.data}T00:00:00`); return d >= inicioMes && d <= fimMes; }).length;
+      const feriasAtiva = FERIAS.find(f => new Date(`${f.inicio}T00:00:00`) <= fimMes && new Date(`${f.fim}T00:00:00`) >= inicioMes);
+      let flag = false, texto = 'sem eventos';
+      if (isPastMonth) {
+        // mês já passou — não sinaliza mais como pendente, é só histórico
+        flag = false;
+        texto = 'sem eventos';
+      } else if (feriasAtiva) {
+        flag = true;
+        texto = new Date(`${feriasAtiva.inicio}T00:00:00`) < inicioMes ? 'férias (cont.)' : 'em férias';
+      } else if (folgasNoMes > 0) {
+        flag = true;
+        texto = `${folgasNoMes} ${plural(folgasNoMes, 'folgão', 'folgões')}`;
+      }
+      const isCurrentMonth = idx === TODAY.getMonth();
+      return `<div class="month-card${isCurrentMonth ? ' current' : ''}" data-month="${nomeMes}">
+        <div class="name">${nomeMes}</div>
+        <div class="tag${flag ? ' flag' : ''}"><span class="dot"></span>${texto}</div>
+      </div>`;
+    }).join('');
+    root.querySelector('#month-grid').innerHTML = cardHtml;
+
+    const proximosEventos = allEvents().filter(e => e.data >= TODAY_ISO);
+    renderEventList(root.querySelector('#proximos-eventos'), proximosEventos, 'Nenhum evento próximo registrado.');
+  }
+
+  // ---------------- navegação ----------------
+  const navItems = root.querySelectorAll('.nav-item[data-view]');
+  const viewDash = root.querySelector('#view-dashboard');
+  const viewMonth = root.querySelector('#view-month');
+  const title = root.querySelector('#topbar-title');
+  const meta = root.querySelector('#topbar-meta');
+  const actions = root.querySelector('#topbar-actions');
+  const toast = root.querySelector('#toast');
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  function renderActions(isMonth) {
+    actions.innerHTML = isMonth
+      ? '<button class="btn" id="btn-print">Imprimir / PDF</button><button class="btn primary" id="btn-word">Gerar Word</button>'
+      : '';
+    if (isMonth) {
+      root.querySelector('#btn-print').addEventListener('click', () => window.print());
+      root.querySelector('#btn-word').addEventListener('click', () => {
+        showToast('No site de verdade, isso vai gerar o mesmo .docx que o gerador de Word já produz hoje.');
+      });
+    }
+  }
+
+  function goToMonth(monthName) {
+    const monthIdx = MESES.indexOf(monthName);
+    navItems.forEach(n => n.classList.remove('active'));
+    const target = [...navItems].find(n => n.dataset.month === monthName);
+    if (target) target.classList.add('active');
+    viewDash.classList.add('hidden');
+    viewMonth.classList.remove('hidden');
+    title.textContent = monthName;
+    meta.textContent = `${MESES[monthIdx]} de 2026 — clique em um nome para editar`;
+    renderActions(true);
+    renderMonth(monthIdx, 2026);
+
+    const inicioMes = new Date(2026, monthIdx, 1);
+    const fimMes = new Date(2026, monthIdx + 1, 0);
+    const eventosDoMes = allEvents().filter(e => {
+      const d = new Date(`${e.data}T00:00:00`);
+      return d >= inicioMes && d <= fimMes;
+    });
+    renderEventList(root.querySelector('#mes-eventos'), eventosDoMes, 'Sem trocas, férias ou reciclagem neste mês.');
+  }
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      if (item.dataset.view === 'month') { goToMonth(item.dataset.month); return; }
+      navItems.forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+      viewDash.classList.remove('hidden');
+      viewMonth.classList.add('hidden');
+      title.textContent = 'Painel do ano';
+      meta.textContent = 'Visão geral de folgões, férias e próximos eventos';
+      renderActions(false);
+    });
+  });
+
+  root.querySelector('#month-grid').addEventListener('click', (e) => {
+    const card = e.target.closest('.month-card[data-month]');
+    if (card) goToMonth(card.dataset.month);
+  });
+
+  // ---------------- popup de edição (delegação de evento — funciona pra qualquer mês) ----------------
+  const popup = root.querySelector('#edit-popup');
+  const forms = popup.querySelectorAll('.form');
+  const opts = popup.querySelectorAll('.opt');
+  let activePerson = null;
+
+  function closePopup() {
+    popup.classList.remove('open');
+    forms.forEach(f => f.classList.remove('open'));
+    opts.forEach(o => o.style.display = 'flex');
+    popup.querySelector('.divider').style.display = 'block';
+  }
+
+  function otherPeople(nome) {
+    return EQUIPE.filter(e => e.nome !== nome);
+  }
+
+  // férias: sempre 20 dias corridos ou 1 mês — a data de fim é calculada, nunca digitada
+  function parseBR(dateStr) {
+    const [d, m, y] = dateStr.split('/').map(Number);
+    return new Date(y, m - 1, d);
+  }
+  function formatBR(date) {
+    return `${pad2(date.getDate())}/${pad2(date.getMonth() + 1)}/${date.getFullYear()}`;
+  }
+  function recomputeFeriasFim() {
+    const inicioVal = root.querySelector('#ferias-inicio').value;
+    if (!inicioVal) return;
+    const inicio = parseBR(inicioVal);
+    const duracao = root.querySelector('#ferias-duracao').value;
+    let fim;
+    if (duracao === '20') {
+      fim = new Date(inicio); fim.setDate(fim.getDate() + 19);
+    } else {
+      fim = new Date(inicio.getFullYear(), inicio.getMonth() + 1, inicio.getDate() - 1);
+    }
+    root.querySelector('#ferias-fim').value = formatBR(fim);
+  }
+  root.querySelector('#ferias-duracao').addEventListener('change', recomputeFeriasFim);
+
+  calContainer.addEventListener('click', (e) => {
+    const p = e.target.closest('.person');
+    if (!p) return;
+    e.stopPropagation();
+    const cell = p.closest('td');
+    const nome = p.dataset.name;
+    const dateStr = p.dataset.date;
+    const [y, m, day] = dateStr.split('-');
+    const alreadyOpenHere = popup.classList.contains('open') && activePerson === p;
+    closePopup();
+    activePerson = p;
+    cell.appendChild(popup);
+
+    root.querySelector('#dia-label').textContent = `Substituto em ${day}/${m}`;
+    root.querySelector('#dia-note').textContent = `Vale só para ${nomeDiaSemana(new Date(dateStr).getDay())}, ${day}/${m}.`;
+    root.querySelector('#dia-select').innerHTML = otherPeople(nome).map(o => `<option>${o.nome}</option>`).join('');
+    root.querySelector('#ferias-inicio').value = `${day}/${m}/${y}`;
+    root.querySelector('#ferias-duracao').value = '20';
+    recomputeFeriasFim();
+    root.querySelector('#ferias-select').innerHTML = otherPeople(nome).map(o => `<option>${o.nome}</option>`).join('') + '<option>Outro brigadista…</option>';
+
+    const cellRect = cell.getBoundingClientRect();
+    const tableRect = cell.closest('table').getBoundingClientRect();
+    const wouldOverflow = (cellRect.left + p.offsetLeft + 224) > tableRect.right;
+    popup.style.left = wouldOverflow ? 'auto' : (p.offsetLeft + 'px');
+    popup.style.right = wouldOverflow ? '6px' : 'auto';
+    if (!alreadyOpenHere) popup.classList.add('open');
+  });
+
+  opts.forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      e.stopPropagation();
+      opts.forEach(o => o.style.display = 'none');
+      popup.querySelector('.divider').style.display = 'none';
+      forms.forEach(f => f.classList.toggle('open', f.dataset.form === opt.dataset.action));
+    });
+  });
+
+  popup.querySelectorAll('.save').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closePopup();
+      showToast('Alteração salva.');
+    });
+  });
+
+  // ---------------- popup de renomear (blocos de equipe no Painel do ano) ----------------
+  const renamePopup = root.querySelector('#rename-popup');
+
+  function closeRenamePopup() { renamePopup.classList.remove('open'); }
+
+  root.querySelector('#team-blocks').addEventListener('click', (e) => {
+    const row = e.target.closest('.team-row');
+    if (!row) return;
+    e.stopPropagation();
+    const nome = row.dataset.name;
+    const alreadyOpenHere = renamePopup.classList.contains('open') && renamePopup._forRow === row;
+    closeRenamePopup();
+    renamePopup._forRow = row;
+    row.appendChild(renamePopup);
+    root.querySelector('#ano-label').textContent = `Novo nome para ${nome}`;
+    root.querySelector('#ano-input').value = nome;
+    if (!alreadyOpenHere) renamePopup.classList.add('open');
+  });
+
+  renamePopup.querySelector('.save').addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeRenamePopup();
+    showToast('Nome atualizado no ano todo.');
+  });
+  renamePopup.addEventListener('click', (e) => e.stopPropagation());
+
+  document.addEventListener('click', () => { closePopup(); closeRenamePopup(); });
+  popup.addEventListener('click', (e) => e.stopPropagation());
+
+  // estado inicial
+  renderTodayBadge();
+  renderStatsAndTeams();
+  renderMonth(currentMonthIdx, currentYear);
+})();
+</script>

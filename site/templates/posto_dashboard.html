@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}{{ posto.posto_nome }} — Painel do ano{% endblock %}
+{% block page_title %}{{ posto.posto_nome }} — Painel do ano{% endblock %}
+{% block page_meta %}{{ posto.empresa }} — modelo de rotação: {{ posto.modelo_rotacao }}{% endblock %}
+{% block actions %}
+<a class="btn" href="{{ url_for('posto_editar', slug=posto.slug) }}" style="text-decoration:none;">Editar posto</a>
+<a class="btn" href="{{ url_for('posto_gerar_xlsx', slug=posto.slug, ano=ano) }}" style="text-decoration:none;">Gerar planilha (ano)</a>
+{% endblock %}
+{% block content %}
+<div class="stat-row">
+  <div class="stat"><div class="label">Brigadistas</div><div class="value">{{ total_brigadistas }}</div></div>
+  <div class="stat"><div class="label">Folgões restantes em {{ ano }}</div><div class="value accent">{{ folgas_por_pessoa|sum(attribute='registradas') }}</div></div>
+  <div class="stat"><div class="label">Férias ativas</div><div class="value">{{ ferias_ativas }}</div></div>
+  <div class="stat"><div class="label">Meses gerados</div><div class="value">12 / 12</div></div>
+</div>
+
+<div class="section">
+  <h3 class="panel-title">Equipe — quem é quem</h3>
+  <div class="team-blocks" id="team-blocks">
+    {% for nome_grupo, pessoas in grupos.items() %}
+    <div class="team-block">
+      <div class="team-head"><span class="swatch"></span>{{ nome_grupo }}</div>
+      {% for p in pessoas %}
+      <div class="team-row" data-name="{{ p.nome }}">
+        <div class="who"><span class="nome">{{ p.nome }}</span></div>
+        <span class="turno-badge">{{ p.turno }}{{ (' pos' ~ p.pos) if p.pos else '' }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="dash-grid">
+  <div>
+    <div class="month-grid">
+      {% for nome_mes, status in meses_grid %}
+      <a class="month-card {{ 'current' if nome_mes == mes_atual else '' }}" href="{{ url_for('posto_mes', slug=posto.slug, ano=ano, mes=loop.index) }}" style="text-decoration:none;color:inherit;">
+        <div class="name">{{ nome_mes }}</div>
+        <div class="tag {{ 'flag' if status.flag else '' }}"><span class="dot"></span>{{ status.texto }}</div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="panel">
+    <h3>Próximos eventos</h3>
+    {% if eventos %}
+      {% for e in eventos %}
+      <div class="event">
+        <div class="when">{{ e.quando }}</div>
+        <div class="what"><b>{{ e.texto.split(' ')[0] }}</b> {{ e.texto.split(' ', 1)[1] }}
+          {% if e.badge_txt %}<span class="badge {{ e.badge_cls }}">{{ e.badge_txt }}</span>{% endif %}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="event"><div class="what">Nenhum evento próximo registrado.</div></div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="section">
+  <div class="dash-grid" style="grid-template-columns: minmax(320px, 420px) 1fr;">
+    <div>
+      <h3 class="panel-title">Folgões restantes no ano — {{ ano }}</h3>
+      <div class="team-block">
+        {% for f in folgas_por_pessoa %}
+        <div class="team-row static">
+          <div class="who"><span class="nome">{{ f.nome }}</span></div>
+          <span class="folga-count {{ 'zero' if f.registradas == 0 else '' }}">{{ f.registradas }} {{ 'folgão' if f.registradas == 1 else 'folgões' }} até dez/{{ ano }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div>
+      <h3 class="panel-title">Dias trabalhados — {{ ano }}</h3>
+      <div class="team-block" style="overflow-x: auto;">
+        <table class="dias-trabalhados">
+          <tr><th>Brigadista</th>{% for m in meses_nomes %}<th>{{ m[:3] }}</th>{% endfor %}</tr>
+          {% for d in dias_trabalhados_por_pessoa %}
+          <tr>
+            <td>{{ d.nome }}</td>
+            {% for qtd in d.por_mes %}<td>{{ qtd }}</td>{% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

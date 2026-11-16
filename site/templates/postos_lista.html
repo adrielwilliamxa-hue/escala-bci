@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Postos de Trabalho{% endblock %}
+{% block page_title %}Postos de Trabalho{% endblock %}
+{% block page_meta %}Cada posto tem brigadistas, escala e configuração totalmente independentes{% endblock %}
+{% block actions %}
+<a class="btn primary" href="{{ url_for('posto_novo') }}" style="text-decoration:none;">+ Novo posto</a>
+{% endblock %}
+{% block content %}
+<div class="section">
+  {% if postos %}
+    <table class="cal" style="width:100%;">
+      <thead><tr><th>Posto</th><th>Empresa</th><th>Modelo</th><th>Turnos</th><th>Data-base</th><th></th></tr></thead>
+      <tbody>
+      {% for p in postos %}
+      <tr>
+        <td><a href="{{ url_for('posto_dashboard', slug=p.slug) }}">{{ p.posto_nome }}</a></td>
+        <td>{{ p.empresa }}</td>
+        <td>{{ p.modelo_rotacao }}</td>
+        <td>{{ p.turnos|map(attribute='id')|join(', ') }}</td>
+        <td>{{ p.ancora }}</td>
+        <td>
+          <a href="{{ url_for('posto_editar', slug=p.slug) }}">editar</a>
+          &middot;
+          <button class="btn-remover" data-posto-slug="{{ p.slug }}" data-posto-nome="{{ p.posto_nome }}" title="Excluir posto">excluir</button>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="event"><div class="what">Nenhum posto cadastrado ainda. Clique em "+ Novo posto" para começar.</div></div>
+  {% endif %}
+</div>
+<script>
+document.querySelectorAll('[data-posto-slug]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    if (!confirm('Excluir o posto "' + btn.dataset.postoNome + '"? Esta ação não pode ser desfeita.')) return;
+    fetch('/postos/' + btn.dataset.postoSlug + '/excluir', {method: 'POST'})
+      .then(function() { location.reload(); });
+  });
+});
+</script>
+{% endblock %}

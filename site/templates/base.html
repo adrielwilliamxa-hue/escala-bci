@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Escala BCI{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="mock">
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <path d="M13 3.5a9.5 9.5 0 1 0 8.6 5.4" stroke="#C97A2B" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M21.6 4.5v4.4h-4.4" stroke="#C97A2B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="brand-text">
+            <b>ESCALA BCI</b>
+            <span>Brigada</span>
+          </div>
+        </div>
+        <select class="ano-select" id="ano-select">
+          {% for a in anos_disponiveis %}
+          <option value="{{ a }}" {{ 'selected' if a == ano else '' }}>{{ a }}</option>
+          {% endfor %}
+        </select>
+        <div class="brand-logo" aria-label="Escala BCI">
+          <svg width="118" height="58" viewBox="0 0 118 58" xmlns="http://www.w3.org/2000/svg">
+            <text x="57" y="24" text-anchor="middle" font-family="Bahnschrift, 'DIN Condensed', Arial, sans-serif" font-weight="700" font-size="21" letter-spacing="1" fill="#F3F6F8">BCI</text>
+            <path d="M36 32 Q 57 42, 78 32" fill="none" stroke="#3FC1E9" stroke-width="5" stroke-linecap="round"/>
+            <text x="57" y="54" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="600" font-size="7.5" letter-spacing="3" fill="#8FCBE0">BRIGADA</text>
+          </svg>
+        </div>
+        <nav>
+          <a class="nav-item {{ 'active' if active == 'dashboard' else '' }}" href="{{ url_for('dashboard', ano=ano) }}"><span>Painel do ano (CENTRAL)</span></a>
+          <a class="nav-item {{ 'active' if active == 'postos' else '' }}" href="{{ url_for('postos_lista') }}"><span>Postos de Trabalho</span></a>
+        </nav>
+        <div>
+          <div class="nav-label">Meses{{ ' — ' ~ posto.posto_nome if posto else '' }}</div>
+          <nav>
+            {% for m in meses_sidebar %}
+            {% if posto %}
+            <a class="nav-item {{ 'active' if active == m else '' }}" href="{{ url_for('posto_mes', slug=posto.slug, ano=ano, mes=loop.index) }}"><span>{{ m }}</span><span class="dot"></span></a>
+            {% else %}
+            <a class="nav-item {{ 'active' if active == m else '' }}" href="{{ url_for('mes', nome=m, ano=ano) }}"><span>{{ m }}</span><span class="dot"></span></a>
+            {% endif %}
+            {% endfor %}
+          </nav>
+        </div>
+      </aside>
+      <div class="main">
+        <div class="topbar">
+          <div>
+            <h1>{% block page_title %}Painel do ano{% endblock %}</h1>
+            <div class="meta">{% block page_meta %}Visão geral de folgões, férias e próximos eventos{% endblock %}</div>
+          </div>
+          <div class="topbar-right">
+            <div class="today-badge"><span class="dot"></span><span>Hoje é <b>{{ hoje_texto }}</b></span></div>
+            <div class="actions">{% block actions %}{% endblock %}</div>
+          </div>
+        </div>
+        <div class="view">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+  </div>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

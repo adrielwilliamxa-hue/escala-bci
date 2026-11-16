@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Escala BCI — {{ nome_mes }}{% endblock %}
+{% block page_title %}{{ nome_mes }}{% endblock %}
+{% block page_meta %}{{ nome_mes }} de {{ ano }} — clique em um nome para editar{% endblock %}
+{% block actions %}
+<button class="btn" id="btn-print">Imprimir / PDF</button>
+<a class="btn primary" href="{{ url_for('gerar_word_rota', nome=nome_mes, ano=ano) }}" style="text-decoration:none;">Gerar Word</a>
+{% endblock %}
+{% block content %}
+<div class="print-header">
+  <svg class="print-logo" width="118" height="58" viewBox="0 0 118 58" xmlns="http://www.w3.org/2000/svg" aria-label="Escala BCI">
+    <text x="57" y="24" text-anchor="middle" font-family="Bahnschrift, 'DIN Condensed', Arial, sans-serif" font-weight="700" font-size="21" letter-spacing="1" fill="#16202B">BCI</text>
+    <path d="M36 32 Q 57 42, 78 32" fill="none" stroke="#3FC1E9" stroke-width="5" stroke-linecap="round"/>
+    <text x="57" y="54" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="600" font-size="7.5" letter-spacing="3" fill="#4B5C6B">BRIGADA</text>
+  </svg>
+  <div class="print-header-text">
+    <div class="titulo">Escala de Plantões da Brigada Contra Incêndio — CENTRAL Sede</div>
+    <div class="mes-ano">{{ nome_mes }} de {{ ano }}</div>
+  </div>
+</div>
+<div class="cal-hint">Clique em um nome para <b>trocar o dia ou marcar férias</b>. Para renomear alguém no ano todo, use o Painel do ano.</div>
+<table class="cal">
+  <thead>
+  <tr><th>Domingo</th><th>Segunda</th><th>Terça</th><th>Quarta</th><th>Quinta</th><th>Sexta</th><th>Sábado</th></tr>
+  </thead>
+  <tbody>
+  {% for semana in semanas %}
+  <tr>
+    {% for celula in semana %}
+    <td class="daynum {{ 'weekend' if loop.index0 in (0, 6) else '' }} {{ 'today' if celula and celula.info.data == hoje_iso else '' }}">{{ celula.numero if celula else '' }}</td>
+    {% endfor %}
+  </tr>
+  <tr>
+    {% for celula in semana %}
+    {% if not celula %}
+    <td class="day fora-mes {{ 'weekend' if loop.index0 in (0, 6) else '' }}"></td>
+    {% else %}
+    {% set info = celula.info %}
+    {% set eh_folga = info.data in folga_dias %}
+    <td class="day {{ 'weekend' if loop.index0 in (0, 6) else '' }} {{ 'today' if info.data == hoje_iso else '' }} {{ 'folga-dia' if eh_folga else '' }}">
+      <div class="slotgroup">07–19h</div>
+      {% if info.pos_0719_1 %}<span class="person {{ info.equipe|lower }}" data-name="{{ info.base_0719_1 }}" data-date="{{ info.data }}">{{ info.pos_0719_1 }}</span>{% endif %}
+      {% if info.pos_0719_2 %}<span class="person {{ info.equipe|lower }}" data-name="{{ info.base_0719_2 }}" data-date="{{ info.data }}">{{ info.pos_0719_2 }}</span>{% endif %}
+      <div class="slotgroup">10–22h</div>
+      {% if info.pos_1022_1 %}<span class="person {{ info.equipe|lower }}" data-name="{{ info.base_1022_1 }}" data-date="{{ info.data }}">{{ info.pos_1022_1 }}</span>{% endif %}
+      {% if info.pos_1022_2 %}<span class="person {{ info.equipe|lower }}" data-name="{{ info.base_1022_2 }}" data-date="{{ info.data }}">{{ info.pos_1022_2 }}</span>{% endif %}
+      {% if info.pos_fds %}
+      <span class="fds-toggle" data-mes="{{ nome_mes }}" data-dia="{{ info.dia }}" data-pos-fds="{{ info.pos_fds }}" title="Clique pra trocar a dupla do fim de semana">Dupla {{ 'A' if info.pos_fds == 1 else 'B' }}</span>
+      {% endif %}
+    </td>
+    {% endif %}
+    {% endfor %}
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% if ferias_ativas %}
+<div class="section" id="ferias-ativas-section">
+  {% for f in ferias_ativas %}
+  <div class="ferias-bloco">
+    <div class="ferias-cobertura-linha">
+      <span><b>COBERTURA DE FÉRIAS:</b> <span class="substituto-atual" data-id="{{ f.id }}">{{ f.substituto }}</span></span>
+      <span>
+        <button class="btn-editar-substituto" data-id="{{ f.id }}" title="Editar o nome do substituto">✎</button>
+        <button class="btn-remover" data-tipo="ferias" data-id="{{ f.id }}" title="Remover esta férias">×</button>
+      </span>
+    </div>
+    <div class="editar-substituto-form" data-id="{{ f.id }}" style="display:none;">
+      <input type="text" class="editar-substituto-input" value="{{ f.substituto }}">
+      <button class="btn-salvar-substituto" data-id="{{ f.id }}">Salvar</button>
+    </div>
+    <div><b>FÉRIAS:</b> {{ f.pessoa_completa }} {{ f.inicio[8:10] }}/{{ f.inicio[5:7] }}/{{ f.inicio[2:4] }} A {{ f.fim[8:10] }}/{{ f.fim[5:7] }}/{{ f.fim[2:4] }}. ({{ f.duracao_dias }} DIAS).</div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="section" id="mes-eventos-section">
+  <h3 class="panel-title">Trocas, férias e reciclagem deste mês</h3>
+  {% if eventos_mes %}
+    {% for e in eventos_mes %}
+    <div class="event">
+      <div class="when">{{ e.quando }}</div>
+      <div class="what"><b>{{ e.texto.split(' ')[0] }}</b> {{ e.texto.split(' ', 1)[1] }}
+        {% if e.badge_txt %}<span class="badge {{ e.badge_cls }}">{{ e.badge_txt }}</span>{% endif %}
+        {% if e.tipo %}<button class="btn-remover" data-tipo="{{ e.tipo }}" data-id="{{ e.id }}" title="Remover">×</button>{% endif %}</div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="event"><div class="what">Sem trocas, férias ou reciclagem neste mês.</div></div>
+  {% endif %}
+</div>
+
+<div class="print-footer">
+  <div class="print-lei">F. LEI 11.901/2009.</div>
+  <div class="print-certificados">
+    {% for c in certificados %}
+    <div class="print-cert-row"><span class="print-cert-nome">{{ c.pessoa }}</span><span class="print-cert-codigo">{{ c.codigo }}</span></div>
+    {% endfor %}
+  </div>
+  <div class="print-emissao">Brasília, {{ hoje_iso[8:10] }}/{{ hoje_iso[5:7] }}/{{ hoje_iso[0:4] }}.</div>
+</div>
+
+<div class="popup" id="edit-popup">
+  <div class="opt" data-action="dia"><span class="k">D</span>Alterar este dia</div>
+  <div class="opt" data-action="ferias"><span class="k">F</span>Marcar férias</div>
+  <div class="divider"></div>
+  <div class="form" data-form="dia">
+    <label id="dia-label">Substituto em --/--</label>
+    <select id="dia-select">
+      {% for p in equipe %}<option>{{ p.nome }}</option>{% endfor %}
+      <option value="__outro__">Outro brigadista…</option>
+    </select>
+    <input type="text" id="dia-select-outro" placeholder="Nome do substituto" style="display:none; margin-top:6px;">
+    <button class="save">Salvar troca do dia</button>
+    <div class="note" id="dia-note">Vale só para este dia.</div>
+  </div>
+  <div class="form" data-form="ferias">
+    <label>Início</label><input type="text" id="ferias-inicio">
+    <label>Duração</label>
+    <select id="ferias-duracao">
+      <option value="20">20 dias</option>
+      <option value="mes">1 mês</option>
+    </select>
+    <label>Fim (calculado)</label><input type="text" id="ferias-fim" readonly>
+    <label>Substituto</label>
+    <select id="ferias-select">
+      {% for p in equipe %}<option>{{ p.nome }}</option>{% endfor %}
+      <option value="__outro__">Outro brigadista…</option>
+    </select>
+    <input type="text" id="ferias-select-outro" placeholder="Nome do substituto" style="display:none; margin-top:6px;">
+    <button class="save">Marcar férias</button>
+  </div>
+</div>
+{% endblock %}

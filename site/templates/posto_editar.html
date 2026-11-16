@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar' if posto else 'Novo' }} posto{% endblock %}
+{% block page_title %}{{ 'Editar posto' if posto else 'Novo posto' }}{% endblock %}
+{% block page_meta %}Todos os campos aqui viram parâmetros do Motor Universal — nenhum valor fica travado no código{% endblock %}
+{% block content %}
+<div class="section" id="posto-form">
+  <label>Nome do posto</label>
+  <input type="text" id="f-posto-nome" value="{{ posto.posto_nome if posto else '' }}">
+
+  <label>Empresa</label>
+  <input type="text" id="f-empresa" value="{{ posto.empresa if posto else '' }}">
+
+  <label>Local</label>
+  <input type="text" id="f-local" value="{{ posto.local if posto else '' }}">
+
+  <label>Data-base (âncora)</label>
+  <input type="text" id="f-ancora" placeholder="AAAA-MM-DD" value="{{ posto.ancora if posto else '' }}">
+
+  <label>Modelo de rotação</label>
+  <select id="f-modelo-rotacao">
+    <option value="grupo" {{ 'selected' if posto and posto.modelo_rotacao == 'grupo' else '' }}>Grupo (equipes nomeadas alternando por dia)</option>
+    <option value="individual" {{ 'selected' if posto and posto.modelo_rotacao == 'individual' else '' }}>Individual (fila com bloco trabalho/folga)</option>
+  </select>
+
+  <div id="campos-individual" style="display:{{ 'block' if posto and posto.modelo_rotacao == 'individual' else 'none' }};">
+    <label>Dias de trabalho por ciclo</label>
+    <input type="number" id="f-dias-trabalho" value="{{ posto.dias_trabalho if posto and posto.dias_trabalho else 6 }}">
+    <label>Dias de folga por ciclo</label>
+    <input type="number" id="f-dias-folga" value="{{ posto.dias_folga if posto and posto.dias_folga else 2 }}">
+  </div>
+
+  <h3 class="panel-title">Turnos</h3>
+  <div id="turnos-lista"></div>
+  <button class="btn" type="button" id="btn-add-turno">+ Adicionar turno</button>
+
+  <h3 class="panel-title">Brigadistas</h3>
+  <div class="note">Modelo "grupo": informe equipe (qualquer 2 rótulos, ex.: Alfa/Bravo), turno e posição (1, 2, ...). Modelo "individual": informe só o turno — a ordem de cadastro define a ordem na fila.</div>
+  <div id="equipe-lista"></div>
+  <button class="btn" type="button" id="btn-add-pessoa">+ Adicionar brigadista</button>
+
+  <div style="margin-top:20px;">
+    <button class="btn primary" id="btn-salvar-posto">Salvar posto</button>
+  </div>
+</div>
+
+<script>
+const POSTO = {{ (posto or {}) | tojson }};
+const SLUG = {{ (posto.slug if posto else none) | tojson }};
+
+function linhaTurno(t) {
+  t = t || {id: '', n_posicoes: 2, modo_fds: 'alterna'};
+  const div = document.createElement('div');
+  div.className = 'turno-row';
+  div.innerHTML = `
+    <input type="text" class="t-id" placeholder="id do turno (ex.: 0719)" value="${t.id}">
+    <input type="number" class="t-n-posicoes" placeholder="posições" value="${t.n_posicoes}">
+    <select class="t-modo-fds">
+      <option value="alterna" ${t.modo_fds==='alterna'?'selected':''}>alterna</option>
+      <option value="unico" ${t.modo_fds==='unico'?'selected':''}>único</option>
+      <option value="parceiro_ativo" ${t.modo_fds==='parceiro_ativo'?'selected':''}>parceiro ativo</option>
+    </select>
+    <button type="button" class="btn-remover-linha">×</button>
+  `;
+  div.querySelector('.btn-remover-linha').addEventListener('click', () => div.remove());
+  return div;
+}
+
+function linhaPessoa(p) {
+  p = p || {nome: '', equipe: '', turno: '', pos: 1};
+  const div = document.createElement('div');
+  div.className = 'pessoa-row';
+  div.innerHTML = `
+    <input type="text" class="p-nome" placeholder="nome" value="${p.nome}">
+    <input type="text" class="p-equipe" placeholder="equipe (grupo)" value="${p.equipe || ''}">
+    <input type="text" class="p-turno" placeholder="turno" value="${p.turno || ''}">
+    <input type="number" class="p-pos" placeholder="posição" value="${p.pos || 1}">
+    <button type="button" class="btn-remover-linha">×</button>
+  `;
+  div.querySelector('.btn-remover-linha').addEventListener('click', () => div.remove());
+  return div;
+}
+
+const turnosLista = document.getElementById('turnos-lista');
+const equipeLista = document.getElementById('equipe-lista');
+
+(POSTO.turnos || []).forEach(t => turnosLista.appendChild(linhaTurno(t)));
+if (!POSTO.turnos || !POSTO.turnos.length) turnosLista.appendChild(linhaTurno());
+
+(POSTO.equipe || []).forEach(p => equipeLista.appendChild(linhaPessoa(p)));
+if (!POSTO.equipe || !POSTO.equipe.length) equipeLista.appendChild(linhaPessoa());
+
+document.getElementById('btn-add-turno').addEventListener('click', () => turnosLista.appendChild(linhaTurno()));
+document.getElementById('btn-add-pessoa').addEventListener('click', () => equipeLista.appendChild(linhaPessoa()));
+
+document.getElementById('f-modelo-rotacao').addEventListener('change', function() {
+  document.getElementById('campos-individual').style.display = this.value === 'individual' ? 'block' : 'none';
+});
+
+document.getElementById('btn-salvar-posto').addEventListener('click', function() {
+  const turnos = Array.from(turnosLista.querySelectorAll('.turno-row')).map(row => ({
+    id: row.querySelector('.t-id').value.trim(),
+    n_posicoes: row.querySelector('.t-n-posicoes').value,
+    modo_fds: row.querySelector('.t-modo-fds').value,
+  })).filter(t => t.id);
+
+  const modeloRotacao = document.getElementById('f-modelo-rotacao').value;
+  const equipe = Array.from(equipeLista.querySelectorAll('.pessoa-row')).map(row => {
+    const nome = row.querySelector('.p-nome').value.trim();
+    const turno = row.querySelector('.p-turno').value.trim();
+    if (modeloRotacao === 'individual') return {nome, turno};
+    return {
+      nome, turno,
+      equipe: row.querySelector('.p-equipe').value.trim(),
+      pos: parseInt(row.querySelector('.p-pos').value || '1', 10),
+    };
+  }).filter(p => p.nome);
+
+  const body = {
+    posto_nome: document.getElementById('f-posto-nome').value,
+    empresa: document.getElementById('f-empresa').value,
+    local: document.getElementById('f-local').value,
+    ancora: document.getElementById('f-ancora').value,
+    modelo_rotacao: modeloRotacao,
+    turnos, equipe,
+    ferias: POSTO.ferias || [],
+    folgas: POSTO.folgas || [],
+    overrides_fds: POSTO.overrides_fds || {},
+    folgas_legais: POSTO.folgas_legais || {},
+    certificados: POSTO.certificados || [],
+  };
+  if (modeloRotacao === 'individual') {
+    body.dias_trabalho = document.getElementById('f-dias-trabalho').value;
+    body.dias_folga = document.getElementById('f-dias-folga').value;
+  }
+
+  const url = SLUG ? `/postos/${SLUG}/editar` : '/postos/novo';
+  fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)})
+    .then(r => r.json())
+    .then(data => {
+      if (data.ok) { window.location.href = `/postos/${data.slug}`; }
+      else { alert(data.erro || 'Erro ao salvar o posto.'); }
+    });
+});
+</script>
+{% endblock %}

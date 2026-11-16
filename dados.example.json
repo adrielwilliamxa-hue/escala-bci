@@ -1,0 +1,111 @@
+{
+  "equipe": [
+    {
+      "nome": "EDUARDO",
+      "equipe": "Bravo",
+      "turno": "0719",
+      "pos": 1
+    },
+    {
+      "nome": "BRUNO",
+      "equipe": "Bravo",
+      "turno": "0719",
+      "pos": 2
+    },
+    {
+      "nome": "GABRIEL",
+      "equipe": "Bravo",
+      "turno": "1022",
+      "pos": 1
+    },
+    {
+      "nome": "IGOR",
+      "equipe": "Bravo",
+      "turno": "1022",
+      "pos": 2
+    },
+    {
+      "nome": "VITOR",
+      "equipe": "Alfa",
+      "turno": "0719",
+      "pos": 1
+    },
+    {
+      "nome": "CARLOS",
+      "equipe": "Alfa",
+      "turno": "0719",
+      "pos": 2
+    },
+    {
+      "nome": "DANIEL",
+      "equipe": "Alfa",
+      "turno": "1022",
+      "pos": 1
+    },
+    {
+      "nome": "JULIO",
+      "equipe": "Alfa",
+      "turno": "1022",
+      "pos": 2
+    }
+  ],
+  "ancora": "2026-04-01",
+  "folgas": [
+    {
+      "pessoa": "CARLOS",
+      "data": "2026-04-04",
+      "substituto": "DANIEL",
+      "id": "be0550c1"
+    },
+    {
+      "pessoa": "DANIEL",
+      "data": "2026-04-26",
+      "substituto": "CARLOS",
+      "id": "db0cd131"
+    }
+  ],
+  "ferias": [
+    {
+      "pessoa": "DANIEL",
+      "inicio": "2026-07-15",
+      "fim": "2026-08-03",
+      "substituto": "HUGO",
+      "id": "869584ee"
+    }
+  ],
+  "certificados": [
+    {
+      "pessoa": "EDUARDO",
+      "codigo": "09-23"
+    },
+    {
+      "pessoa": "BRUNO",
+      "codigo": "01-15-29"
+    },
+    {
+      "pessoa": "GABRIEL",
+      "codigo": "15-23"
+    },
+    {
+      "pessoa": "IGOR",
+      "codigo": "01-09-29"
+    },
+    {
+      "pessoa": "VITOR",
+      "codigo": "02-16-30"
+    },
+    {
+      "pessoa": "CARLOS",
+      "codigo": "08-22"
+    },
+    {
+      "pessoa": "DANIEL",
+      "codigo": "02-22-30"
+    },
+    {
+      "pessoa": "JULIO",
+      "codigo": "08-16"
+    }
+  ],
+  "overrides_fds": {}
+}

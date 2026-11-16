@@ -1,0 +1,14 @@
+.superpowers/
+__pycache__/
+*.pyc
+Word gerados/*.docx
+build/
+dist/
+Escala BCI.exe
+Escala BCI Multi-Postos.exe
+Word gerados/*.xlsx
+dados.json
+site/dados.json
+postos/*.json
+!postos/exemplo.json
+*.xlsx

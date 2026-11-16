@@ -1,0 +1,66 @@
+{
+  "posto_nome": "Posto Exemplo",
+  "empresa": "Empresa Exemplo LTDA",
+  "local": "Posto Exemplo",
+  "ancora": "2026-06-01",
+  "modelo_rotacao": "grupo",
+  "turnos": [
+    {
+      "id": "0719",
+      "n_posicoes": 1,
+      "modo_fds": "parceiro_ativo"
+    },
+    {
+      "id": "0921",
+      "n_posicoes": 1,
+      "modo_fds": "parceiro_ativo"
+    }
+  ],
+  "equipe": [
+    {
+      "equipe": "Bravo",
+      "nome": "BRIGADISTA_A",
+      "pos": 1,
+      "turno": "0719"
+    },
+    {
+      "equipe": "Alfa",
+      "nome": "BRIGADISTA_B",
+      "pos": 1,
+      "turno": "0719"
+    },
+    {
+      "equipe": "Bravo",
+      "nome": "BRIGADISTA_C",
+      "pos": 1,
+      "turno": "0921"
+    },
+    {
+      "equipe": "Alfa",
+      "nome": "BRIGADISTA_D",
+      "pos": 1,
+      "turno": "0921"
+    }
+  ],
+  "folgas": [],
+  "ferias": [
+    {
+      "fim": "2026-08-18",
+      "inicio": "2026-07-20",
+      "pessoa": "BRIGADISTA_B",
+      "substituto": "BRIGADISTA_SUBSTITUTO",
+      "id": "exemplo003"
+    }
+  ],
+  "overrides_fds": {},
+  "folgas_legais": {
+    "2026-06": {
+      "BRIGADISTA_A": [7, 27],
+      "BRIGADISTA_B": [6, 14],
+      "BRIGADISTA_C": [13, 21],
+      "BRIGADISTA_D": [20, 28]
+    }
+  },
+  "certificados": [],
+  "observacoes": ""
+}

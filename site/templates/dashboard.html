@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Escala BCI — Painel do ano{% endblock %}
+{% block content %}
+<div class="stat-row">
+  <div class="stat"><div class="label">Brigadistas</div><div class="value">{{ total_brigadistas }}</div></div>
+  <div class="stat"><div class="label">Folgões restantes em {{ ano }}</div><div class="value accent">{{ folgas_por_pessoa|sum(attribute='registradas') }}</div></div>
+  <div class="stat"><div class="label">Férias ativas</div><div class="value">{{ ferias_ativas }}</div></div>
+  <div class="stat"><div class="label">Meses gerados</div><div class="value">12 / 12</div></div>
+</div>
+
+<div class="section">
+  <h3 class="panel-title">Equipe — quem é quem, e o horário de cada plantão</h3>
+  <div class="team-blocks" id="team-blocks">
+    <div class="team-block bravo">
+      <div class="team-head"><span class="swatch"></span>Plantão Bravo</div>
+      {% for p in equipe_bravo %}
+      <div class="team-row" data-name="{{ p.nome }}" data-nome-completo="{{ p.nome_completo or '' }}">
+        <div class="who"><span class="nome">{{ p.nome }}</span></div>
+        <span class="turno-badge bravo">{{ '07h–19h' if p.turno == '0719' else '10h–22h' }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="team-block alfa">
+      <div class="team-head"><span class="swatch"></span>Plantão Alfa</div>
+      {% for p in equipe_alfa %}
+      <div class="team-row" data-name="{{ p.nome }}" data-nome-completo="{{ p.nome_completo or '' }}">
+        <div class="who"><span class="nome">{{ p.nome }}</span></div>
+        <span class="turno-badge alfa">{{ '07h–19h' if p.turno == '0719' else '10h–22h' }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="dash-grid">
+  <div>
+    <div class="month-grid">
+      {% for nome_mes, status in meses_grid %}
+      <a class="month-card {{ 'current' if nome_mes == mes_atual else '' }}" href="{{ url_for('mes', nome=nome_mes, ano=ano) }}" style="text-decoration:none;color:inherit;">
+        <div class="name">{{ nome_mes }}</div>
+        <div class="tag {{ 'flag' if status.flag else '' }}"><span class="dot"></span>{{ status.texto }}</div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="panel">
+    <h3>Próximos eventos</h3>
+    {% if eventos %}
+      {% for e in eventos %}
+      <div class="event">
+        <div class="when">{{ e.quando }}</div>
+        <div class="what"><b>{{ e.texto.split(' ')[0] }}</b> {{ e.texto.split(' ', 1)[1] }}
+          {% if e.badge_txt %}<span class="badge {{ e.badge_cls }}">{{ e.badge_txt }}</span>{% endif %}
+          {% if e.tipo %}<button class="btn-remover" data-tipo="{{ e.tipo }}" data-id="{{ e.id }}" title="Remover">×</button>{% endif %}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="event"><div class="what">Nenhum evento próximo registrado.</div></div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="section">
+  <div class="dash-grid" style="grid-template-columns: minmax(320px, 420px) 1fr;">
+    <div>
+      <h3 class="panel-title">Folgões restantes no ano — {{ ano }}</h3>
+      <div class="team-block">
+        {% for f in folgas_por_pessoa %}
+        <div class="team-row static">
+          <div class="who"><span class="nome">{{ f.nome }}</span></div>
+          <span class="folga-count {{ 'zero' if f.registradas == 0 else '' }}">{{ f.registradas }} {{ 'folgão' if f.registradas == 1 else 'folgões' }} até dez/{{ ano }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div id="dias-trabalhados">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <h3 class="panel-title" style="margin-bottom:0;">Dias trabalhados — {{ ano }}</h3>
+        <select id="mes-trabalhados-select" class="ano-select" style="color: var(--ink); background: var(--surface); border-color: var(--line);">
+          <option value="todos">Ano inteiro</option>
+          {% for m in meses_nomes %}
+          <option value="{{ loop.index0 }}" {{ 'selected' if m == mes_atual else '' }}>{{ m }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="team-block" style="overflow-x: auto;">
+        <table class="dias-trabalhados" id="tabela-dias-trabalhados">
+          <tr><th>Brigadista</th>{% for m in meses_nomes %}<th data-mes-idx="{{ loop.index0 }}">{{ m[:3] }}</th>{% endfor %}</tr>
+          {% for d in dias_trabalhados_por_pessoa %}
+          <tr>
+            <td>{{ d.nome }}</td>
+            {% for qtd in d.por_mes %}<td data-mes-idx="{{ loop.index0 }}">{{ qtd }}</td>{% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3 class="panel-title">Certificados / Reciclagens</h3>
+  <div class="team-block" id="certificados-panel">
+    {% for c in certificados %}
+    <div class="team-row static">
+      <div class="who"><span class="nome">{{ c.pessoa }}</span></div>
+      <input type="text" class="cert-codigo-input" data-pessoa="{{ c.pessoa }}" value="{{ c.codigo }}" style="width:90px; text-align:center; font: inherit; font-size:12.5px; padding:4px 6px; border-radius:2px; border:1px solid var(--line); background:var(--paper); color:var(--ink);">
+    </div>
+    {% endfor %}
+  </div>
+  <button class="btn primary" id="btn-salvar-certificados" style="margin-top:10px;">Salvar certificados</button>
+</div>
+
+<div class="popup" id="rename-popup">
+  <div class="form open">
+    <label id="ano-label">Novo nome</label>
+    <input type="text" id="ano-input">
+    <label>Nome completo (aparece nas férias)</label>
+    <input type="text" id="ano-input-completo" placeholder="Ex.: DANIEL COSTA DA SILVA">
+    <button class="save">Atualizar o ano todo</button>
+    <div class="note">Isso muda o nome dessa pessoa em todos os meses do ano, de uma vez.</div>
+  </div>
+</div>
+{% endblock %}
